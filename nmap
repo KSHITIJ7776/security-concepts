@@ -1,0 +1,169 @@
+
+
+Nmap Fundamentals Documentation
+A deep beginner-to-intermediate guide to network discovery, port scanning, and scan interpretation
+Prepared for study and authorized lab use.
+Tool name	Nmap (Network Mapper)
+Main purpose	Discover hosts, check ports, identify services, and gather security-relevant network information
+Best known for	Fast scanning, flexible target selection, service/version detection, OS fingerprinting, and NSE scripting
+Typical users	System administrators, network engineers, defenders, and authorized security testers
+
+1. What Nmap Is
+Nmap is a network exploration and security auditing tool. It sends probes to a target, observes how the target responds, and then infers useful information such as whether a host is alive, which ports are open, which services are running, what version of software might be present, and sometimes which operating system the host is using.
+Concept first: Nmap does not magically read device settings. It infers facts from network responses, so it is powerful but still probabilistic.
+Related example: A system administrator can scan a server farm before a maintenance window to confirm which services are exposed and whether anything unexpected is listening.
+•	Network inventory: map live hosts and exposed services.
+•	Troubleshooting: confirm whether a service is reachable on the expected port.
+•	Security auditing: look for unnecessary ports or outdated services.
+•	OS/device profiling: estimate whether a target looks like Linux, Windows, a router, or an embedded device.
+2. Basic Networking Concepts You Need First
+Nmap is easier to understand when you already know a few basics. An IP address identifies a host, a port identifies a service on that host, and transport protocols such as TCP and UDP describe how packets are delivered.
+Term	Meaning
+Host	A device on the network such as a PC, server, router, printer, or VM.
+IP address	A numeric address used to identify a host on a network.
+Port	A numbered doorway used by applications, such as 22 for SSH or 80 for HTTP.
+TCP	Connection-oriented transport protocol commonly used for web, SSH, and email.
+UDP	Connectionless transport protocol commonly used for DNS, streaming, and discovery.
+
+3. How Nmap Works
+Nmap works by sending packets or establishing connections and then analyzing the replies. A target might answer in different ways depending on whether a port is open, closed, filtered by a firewall, or only partially visible.
+Simple scan flow: Target selection -> Probes sent -> Responses analyzed -> Ports/services/state reported
+Port state	What it usually means
+open	An application is listening and willing to accept connections or datagrams.
+closed	The host is reachable, but nothing is listening on that port.
+filtered	A firewall or filter is blocking Nmap from deciding the true state.
+unfiltered	The port is reachable, but Nmap cannot tell whether it is open or closed.
+open|filtered	Common in UDP scans when the probe may have been lost or blocked.
+closed|filtered	A mixed or uncertain state seen in some specialized scan situations.
+Related example: If you scan a DNS server with UDP and get open|filtered, that usually means the service may be there but the response was not conclusive.
+4. Target Specification
+Nmap accepts many target forms, so you can scan one machine or thousands from a single command.
+Target form	Example	Where to use it
+Single host	192.168.1.10	Use when checking one server, VM, or lab host.
+Hostname	server.example.com	Use when DNS is available and you prefer names over IPs.
+Range	192.168.1.1-50	Use for a small contiguous block of addresses.
+Subnet/CIDR	192.168.1.0/24	Use for a whole subnet during discovery or inventory.
+List from file	-iL targets.txt	Use when targets are saved in a text file.
+
+5. Host Discovery and Reachability
+Before scanning ports, you often want to know which hosts are alive. Nmap can send discovery probes such as ICMP, TCP, or ARP depending on the network and privileges available.
+Command / option	Meaning	When to use it	Example
+nmap -sn 192.168.1.0/24	Ping scan; discovers live hosts without port scanning	Use for quick inventory or when you only care about which hosts are up	nmap -sn 10.0.0.0/24
+-Pn	Skip discovery and treat hosts as online	Use when ping is blocked but you still want to scan ports	nmap -Pn 192.168.1.10
+-n	Disable DNS resolution	Use to speed up scans and avoid reverse-DNS delays	nmap -n 10.0.0.0/24
+-R	Always resolve hostnames	Use when names matter for reporting or troubleshooting	nmap -R 192.168.1.10
+Important note: On local Ethernet networks, Nmap may use ARP-based discovery, which is very reliable because it asks the local network directly.
+6. Ports and Port Ranges
+Ports are where services listen. By default, Nmap focuses on a curated list of common ports, but you can define your own range or list.
+Command	What it does	Where it helps	Example
+-p 22	Scan a single port	When you only care about one known service, such as SSH	nmap -p 22 192.168.1.10
+-p 80,443	Scan a comma-separated list	When checking a small set of web ports	nmap -p 80,443 host
+-p 1-1024	Scan a range	When you want the well-known port range	nmap -p 1-1024 host
+-p-	Scan all 65535 TCP ports	When you do a deeper audit or do not know where the service is listening	nmap -p- host
+--top-ports 100	Scan the most common ports	When you want a broad but faster first pass	nmap --top-ports 100 host
+-F	Fast scan of fewer common ports	When time matters and you only want the fastest triage	nmap -F host
+
+7. Common Scan Types
+Scan type changes how Nmap talks to the target. Some scans require raw packet privileges, while others work through the operating system's normal connection functions.
+Option	Meaning	When to use it	Example
+-sS	TCP SYN scan	Default choice on many systems; fast and common for TCP port discovery	nmap -sS host
+-sT	TCP connect scan	Use when you do not have raw-packet privileges	nmap -sT host
+-sU	UDP scan	Use for DNS, SNMP, NTP, DHCP, VoIP, and other UDP-based services	nmap -sU host
+-sA	ACK scan	Use mainly to map firewall rules and filtering behavior	nmap -sA host
+-sN	NULL scan	Specialized TCP scan for research or compatibility testing	nmap -sN host
+-sF	FIN scan	Specialized scan sometimes used in packet-filter testing	nmap -sF host
+-sX	Xmas scan	Specialized scan for filter behavior and edge-case testing	nmap -sX host
+Related example: To check a web server quickly, a SYN scan is usually the first choice. To see whether DNS or SNMP is alive, add a UDP scan.
+8. Service and Version Detection
+Open ports alone do not tell you what is running. Service detection compares responses against Nmap's probe database to guess the protocol, product, and version.
+Option	Meaning	Where to use it	Example
+-sV	Enable version detection	Use after you find open ports and want to identify the application	nmap -sV host
+--version-light	Fewer probes	Use for quicker but lighter service detection	nmap --version-light host
+--version-all	More probes	Use for the most thorough version testing	nmap --version-all host
+-A	Aggressive scan bundle	Use when you want version detection, OS detection, default scripts, and traceroute together	nmap -A host
+Important: version detection is a best guess, not a guarantee. Always verify critical findings with application-level checks or manual inspection.
+9. Operating System Detection
+OS detection uses TCP/IP fingerprinting. Nmap compares a target's response pattern against a database of known fingerprints.
+Option	Meaning	When to use it	Example
+-O	Enable OS detection	Use when you want to estimate the target OS or device type	nmap -O host
+-A	Includes OS detection	Use for broader reconnaissance in an authorized lab or assessment	nmap -A host
+OS detection works best when Nmap can see both open and closed ports on the target.
+10. Nmap Scripting Engine (NSE)
+NSE extends Nmap with Lua scripts. Scripts can automate discovery, banner checks, safe informational checks, and in some cases vulnerability checks.
+Option	Meaning	Where to use it	Example
+-sC	Run the default script set	Use for a common, safe first look at the target	nmap -sC host
+--script <name>	Run a specific script or category	Use when you want targeted checks such as http or smb scripts	nmap --script http-title host
+--script-help <name>	Show script help	Use before running a script so you know what it does	nmap --script-help vuln
+--script-args	Pass arguments to scripts	Use when a script needs login info, paths, or other parameters	nmap --script http-auth --script-args user=admin
+--script-trace	Show script I/O	Use only when debugging script behavior	nmap --script-trace host
+Script categories you will often see: default, safe, discovery, version, auth, vuln, intrusive, and brute.
+Use only scripts that match your authorization and the purpose of your test.
+11. Output Formats and Reading Results
+Nmap can produce human-readable output or structured output for later processing. Each report usually lists the host first, then ports, states, service names, and extra notes.
+Option	Meaning	Where to use it	Example
+-oN <file>	Normal human-readable output	Use for notes, reports, and quick review	nmap -oN scan.txt host
+-oX <file>	XML output	Use for parsing, tools, and automation	nmap -oX scan.xml host
+-oG <file>	Grepable output	Use only if a legacy workflow expects it	nmap -oG scan.gnmap host
+-oA <basename>	Save normal, XML, and grepable together	Use when you want all common output formats at once	nmap -oA scan host
+-v / -vv	Increase verbosity	Use when you want more detail while the scan runs	nmap -vv host
+--reason	Show why Nmap made each decision	Use when you want to understand open/closed/filtered results	nmap --reason host
+12. Timing, Performance, and Reliability
+Timing controls how aggressively Nmap sends probes and how much it retries. Faster scans are useful for large networks, but slower scans can be safer on unstable or highly filtered links.
+Option	Meaning	When to use it	Example
+-T0 to -T5	Timing templates from paranoid to insane	Use to balance stealth, reliability, and speed	nmap -T4 host
+--min-rate	Minimum packet sending rate	Use when you want to prevent scans from becoming too slow	nmap --min-rate 100 host
+--max-rate	Maximum packet sending rate	Use to keep scans from flooding a link	nmap --max-rate 500 host
+--max-retries	Limit retry count	Use to control how often Nmap retries unanswered probes	nmap --max-retries 2 host
+--host-timeout	Stop after a host takes too long	Use when scanning many hosts and you want to skip stuck ones	nmap --host-timeout 2m host
+--stats-every	Periodic progress updates	Use on long scans to track progress	nmap --stats-every 30s host
+13. Practical Command Examples
+These examples show the most common workflows and where they are useful.
+Goal	Command	When to use it
+Discover live hosts on a subnet	nmap -sn 192.168.1.0/24	Use during inventory or when you only want to know what is online.
+Scan one host with default top ports	nmap 192.168.1.10	Use for a fast first look.
+Scan specific ports	nmap -p 22,80,443 192.168.1.10	Use when you already know which services matter.
+Scan all TCP ports	nmap -p- 192.168.1.10	Use for deep exposure checking.
+Check UDP services	nmap -sU -p 53,67,68,123 192.168.1.10	Use for DNS, DHCP, NTP, and similar services.
+Identify services and versions	nmap -sV 192.168.1.10	Use after you find open ports and need to know what is running.
+Detect OS	nmap -O 192.168.1.10	Use for device profiling and inventory.
+Run default scripts	nmap -sC 192.168.1.10	Use for a safe scripted first look.
+Aggressive scan bundle	nmap -A 192.168.1.10	Use only when you want multiple discovery features at once.
+Save output for a report	nmap -oA scan 192.168.1.10	Use when you need normal, XML, and grepable output together.
+Skip host discovery	nmap -Pn 192.168.1.10	Use when ping is blocked but port scanning is still needed.
+
+14. How to Interpret Results Safely
+•	Open does not automatically mean vulnerable; it means a service is listening.
+•	Closed does not automatically mean safe; it only means nothing is listening right now.
+•	Filtered usually means a firewall or filter is hiding the true state.
+•	Version guesses are helpful but still guesses, so verify important findings.
+•	A single scan is a snapshot; results can change as services restart, hosts move, or firewalls change.
+15. Best Practice and Authorization
+Only scan systems you own or have explicit permission to test. Nmap is a legitimate administration and auditing tool, but scans can still trigger alerts, increase load, or violate policy if used carelessly. In labs, enterprises, and client environments, always stay within the approved scope.
+16. One-Page Cheat Sheet
+Task	Command
+Discover hosts	nmap -sn 192.168.1.0/24
+Scan one host	nmap 192.168.1.10
+Check ports	nmap -p 1-1024 192.168.1.10
+Detect services	nmap -sV 192.168.1.10
+Detect OS	nmap -O 192.168.1.10
+Run default scripts	nmap -sC 192.168.1.10
+Aggressive scan	nmap -A 192.168.1.10
+Save output	nmap -oN results.txt 192.168.1.10
+17. Reference Commands by Use Case
+This section groups the most important Nmap options by what they are used for.
+Use case	Common command	Why it matters
+Host discovery	-sn, -Pn	Controls whether you only find live hosts or assume they are live.
+TCP discovery	-sS, -sT	Chooses between SYN scanning and full TCP connect scanning.
+UDP discovery	-sU	Checks services like DNS, SNMP, NTP, and DHCP.
+Service detection	-sV, --version-light, --version-all	Shows what application is likely running on an open port.
+OS detection	-O	Estimates the operating system or device family.
+Scripts	-sC, --script, --script-args	Adds scripted checks for more detail.
+Output	-oN, -oX, -oG, -oA	Saves results in the format you need.
+Speed control	-T, --min-rate, --max-rate, --max-retries	Balances speed, reliability, and network load.
+18. References
+•	Nmap Reference Guide: https://nmap.org/book/man.html
+•	Nmap Network Scanning (official book): https://nmap.org/book/
+•	Nmap homepage: https://nmap.org/
+•	Service and Version Detection: https://nmap.org/book/man-version-detection.html
+•	OS Detection: https://nmap.org/book/man-os-detection.html
+•	Nmap Scripting Engine: https://nmap.org/book/nse.html
