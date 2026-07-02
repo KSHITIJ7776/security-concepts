@@ -1,0 +1,111 @@
+QUESTIONS
+---------
+QUESTIONS
+---------
+
+Q1.A single host sends TCP SYN packets to ports 21, 22, 23, 25, 53, 80, and 443 on the same server within one second.
+What attack is occurring?
+SYN Port Scan
+
+Q2.One host sends ICMP Echo Requests to every IP address from 192.168.1.1 to 192.168.1.254.
+Ping Sweep
+
+Q3.Thousands of TCP SYN packets are sent to port 80, but very few ACK packets return.
+SYN Flood
+
+Q4.A host sends UDP packets to ports 53, 69, 123, 161, and 500 on another host.
+UDP Scan
+
+Q5.Multiple unsolicited ARP replies claim that the gateway IP belongs to the attacker's MAC address.
+ARP Poisoning
+
+Q6.Thousands of DNS queries contain long, random-looking subdomains.
+DNS Tunneling
+
+Q7.Hundreds of FTP login attempts fail before one succeeds.
+FTP Brute Force
+
+Q8.A web server receives 500 POST requests to /login.php from the same client.
+HTTP Brute Force
+
+Q9.One client repeatedly attempts SSH authentication with different usernames.
+SSH Brute Force
+
+Q10.A host accesses numerous SMB shares and requests system information.
+SMB Enumeration
+
+Q11.Packets with FIN, PSH, and URG flags set are sent to many destination ports.
+TCP Christmas Scan
+
+Q12.TCP packets contain only the FIN flag while probing multiple ports.
+FIN Scan
+
+Q13.TCP packets have no flags set.
+NULL Scan
+
+Q14.The attacker sends only ACK packets to determine firewall rules.
+ACK Scan
+
+Q15.Thousands of ICMP Echo Requests are sent to a single victim.
+ICMP Flood
+
+Q16.The victim sends an unusually high number of TCP Reset packets after receiving connection attempts.
+Port Scan
+
+Q17.A host requests many domain names that do not exist.
+DNS Enumeration
+
+Q18.A single client opens hundreds of HTTP connections without completing requests.
+Slow HTTP Attack (Slowloris-like)
+
+Q19.One host sends DHCP Discover messages with different MAC addresses.
+DHCP Starvation
+
+Q20.A host repeatedly connects to ports 80 and 443 while sending unusual TLS handshake messages.
+TLS Enumeration
+
+Q21.A host scans all devices in the subnet using ARP Requests.
+ARP Scan
+
+Q22.A DNS server sends responses much larger than the corresponding requests.
+DNS Amplification
+
+Q23.Many TCP retransmissions occur while the server is under heavy traffic.
+Possible DoS Attack
+
+Q24.A client sends repeated login attempts to a Telnet service.
+Telnet Brute Force
+
+Q25.A single IP communicates with nearly every device on the local network within a few seconds.
+Network Discovery / Host Sweep
+
+
+Q26.After analyzing the provided Wireshark capture, what attack is being performed?
+SYN Flood Attack
+
+Q27.The capture shows one source host sending SYN packets to many destination ports on the same server. What activity is occurring?
+Port Scanning
+
+Q28.Multiple unsolicited ARP replies are observed, each claiming the same IP address belongs to the attacker's MAC address. Which attack is this?
+ARP Poisoning
+
+Q29.The capture contains thousands of ICMP Echo Requests in a short period. Which attack is most likely?
+ICMP Flood (Ping Flood)
+
+Q30.The capture contains unusually long DNS queries with random-looking subdomains sent repeatedly to the same domain. What is the most likely attack?
+DNS Tunneling
+
+Q31.Many failed FTP login attempts from the same IP address are followed by a successful login. Which attack is indicated?
+FTP Brute Force Attack
+
+Q32.A web server receives hundreds of POST requests to the login page from the same client within a minute. What attack is most likely?
+HTTP Brute Force Attack
+
+Q33.A host attempts connections to multiple SMB shares and issues numerous SMB information requests. What is the activity?
+SMB Enumeration
+
+Q34.Packets with the FIN, PSH, and URG flags set are observed while probing multiple ports. Which scan is being used?
+TCP Christmas Scan
+
+Q35.A host sends UDP packets to many destination ports and receives ICMP Port Unreachable responses for most of them. What is occurring?
+UDP Scan
