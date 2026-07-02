@@ -1,0 +1,275 @@
+Student Laboratory Exercise: Wireshark 
+Display Filters and Network Traffic 
+Analysis 
+Objective 
+The purpose of this laboratory exercise is to learn and apply Wireshark display filters for 
+analyzing captured network traffic. Students will generate different types of network traffic 
+using Nmap and web browsing activities, capture the traffic using Wireshark, and use display 
+filters to isolate and analyze specific packets and protocols. 
+Learning Outcomes 
+Upon successful completion of this lab, students will be able to: 
+• Capture network traffic using Wireshark. 
+• Generate various network scanning activities using Nmap. 
+• Differentiate between capture filters and display filters. 
+• Apply protocol, IP address, port-based, and packet-field display filters. 
+• Analyze TCP flags, DNS traffic, and HTTP communications. 
+• Investigate network scanning patterns and web traffic behavior. 
+Software Requirements 
+• Windows Operating System 
+• Wireshark 
+• Nmap 
+• Metasploitable Virtual Machine 
+Testbed Setup 
+Step 1: Start Metasploitable 
+1. Boot the Metasploitable virtual machine. 
+2. Determine and record its IP address using the following command: 
+ifconfig 
+or 
+ip addr 
+3. Note the IP address for later use. 
+Metasploitable IP Address: ______________________ 
+Step 2: Install Required Tools 
+1. Download and install Nmap on the Windows machine. 
+2. Launch Wireshark. 
+3. Select the active LAN/Ethernet interface. 
+4. Start packet capture. 
+Part A: Generate Network Traffic Using 
+Nmap 
+Open Command Prompt and execute the following commands, replacing 
+<Metasploitable_IP> with the actual IP address of the target system. 
+Host Discovery and Scanning 
+nmap -A <Metasploitable_IP> 
+nmap -T1 <Metasploitable_IP> 
+nmap -T4 <Metasploitable_IP> 
+nmap -T5 <Metasploitable_IP> 
+nmap -sn 192.168.1.0/24 
+TCP Scan Types 
+nmap -sS <Metasploitable_IP> 
+nmap -sT <Metasploitable_IP> 
+Port Scanning 
+nmap -p 1-1000 <Metasploitable_IP> 
+nmap -sS -p- -T4 <Metasploitable_IP> 
+UDP and Service Detection 
+nmap -sU <Metasploitable_IP> 
+nmap -sV <Metasploitable_IP> 
+Operating System Detection 
+nmap -O <Metasploitable_IP> 
+Part B: Generate Web Traffic 
+Open a web browser and visit the following websites: 
+1. http://www.cdac.in 
+2. http://httpforever.com 
+3. http://eitc.org 
+Login Page Exploration 
+Use the following search queries to locate publicly accessible login pages: 
+inurl:http:// "login" 
+inurl:http:// inurl:login 
+inurl:http:// intitle:login 
+Browse at least five login pages discovered through these searches. 
+Important: Do not attempt unauthorized access to any website. Only observe page loading 
+and associated network traffic. Do not submit credentials to systems you do not own or have 
+permission to access. 
+Part C: Stop Packet Capture 
+After completing all Nmap scans and web browsing activities: 
+1. Return to Wireshark. 
+2. Stop the packet capture. 
+3. Save the capture file for analysis. 
+Part D: Apply Wireshark Display Filters 
+Display filters allow analysis of captured traffic without modifying the original capture. 
+Protocol Filters 
+Display Filter 
+tcp 
+udp 
+Purpose 
+Show only TCP packets 
+Show only UDP packets 
+icmp 
+dns 
+http 
+Show only ICMP packets 
+Show only DNS traffic 
+Show only HTTP traffic 
+IP Address Filters 
+Display Filter 
+ip.addr == Your_IP 
+ip.src == 192.168.0.1 
+Purpose 
+Traffic to or from your system 
+Packets from a specific source 
+ip.dst == <Metasploitable_IP> Packets destined for Metasploitable 
+Port Filters 
+Display Filter Purpose 
+tcp.port == 80 HTTP traffic 
+tcp.port == 443 HTTPS traffic 
+Packet Characteristics 
+Display Filter 
+frame.len > 1000 
+tcp.flags.syn == 1 
+Purpose 
+Large packets 
+TCP SYN packets 
+tcp.analysis.retransmission TCP retransmissions 
+Part E: Combined Filters 
+Apply the following filters and observe the results. 
+tcp and ip.addr == 192.168.1.1 
+http or dns 
+tcp.port == 80 and ip.src == Your_IP 
+!(icmp) 
+Part F: TCP Flag Analysis 
+Display Filter 
+tcp.flags.syn == 1 
+tcp.flags.ack == 1 
+Purpose 
+SYN packets 
+ACK packets 
+tcp.flags.fin == 1 
+tcp.flags.reset == 1 
+Connection termination 
+TCP Reset packets 
+tcp.flags.syn == 1 && tcp.flags.ack == 1 SYN-ACK packets 
+Part G: DNS Traffic Analysis 
+Display Filter 
+dns.flags.response == 0 
+dns.flags.response == 1 
+Purpose 
+DNS queries 
+DNS responses 
+dns.qry.name contains "google" Queries containing "google" 
+dns.time > 1 
+Slow DNS responses 
+Part H: IP Packet Analysis 
+Display Filter 
+ip.ttl < 10 
+ip.flags.df == 1 
+ip.len > 1000 
+Purpose 
+Low TTL packets 
+Don't Fragment flag set 
+Large IP packets 
+ip.src == 192.168.1.10 && ip.dst == 8.8.8.8 Specific communication path 
+Part I: String Matching Filters 
+Search for specific strings within captured packet data. 
+http contains "password" 
+frame contains "admin" 
+Record and analyze any observations. 
+Part J: Nmap Scan Identification 
+Use Wireshark to distinguish between different Nmap scan types. 
+SYN Scan 
+Filter: 
+tcp.flags.syn == 1 && tcp.flags.ack == 0 
+Connect Scan 
+Filter: 
+tcp.flags.syn == 1 || tcp.flags.ack == 1 
+UDP Scan 
+Filter: 
+udp 
+OS Detection 
+Filter: 
+icmp or tcp.options 
+Tasks 
+1. Compare traffic generated by: 
+o nmap -sS 
+o nmap -sT 
+o nmap -sU 
+2. Count the number of packets generated by each scan. 
+3. Identify which scan was fastest. 
+4. Determine how Wireshark can distinguish between scan types. 
+Part K: ARP Analysis 
+Generate ARP traffic by pinging another host. 
+Filter: 
+arp 
+Additional Filters: 
+arp.opcode == 1 
+arp.opcode == 2 
+Tasks 
+1. Identify ARP Requests. 
+2. Identify ARP Replies. 
+3. Determine MAC addresses of communicating devices. 
+4. Explain ARP resolution. 
+Part L: ICMP Analysis 
+Generate ICMP traffic: 
+ping <Metasploitable_IP> 
+Filters: 
+icmp 
+icmp.type == 8 
+icmp.type == 0 
+Tasks 
+1. Identify Echo Requests. 
+2. Identify Echo Replies. 
+3. Measure round-trip time. 
+4. Determine packet size. 
+Part M: Security and Credential Discovery 
+Apply the following filters: 
+http contains "login" 
+http contains "user" 
+http contains "username" 
+http contains "password" 
+frame contains "admin" 
+Tasks 
+1. Search for login-related traffic. 
+2. Identify web forms transmitted over HTTP. 
+3. Discuss why plaintext HTTP is insecure. 
+4. Explain how HTTPS protects credentials. 
+Note: Only analyze traffic generated in the laboratory environment and systems for which 
+you have authorization. 
+Part N: Statistics and Traffic Profiling 
+Use the following Wireshark menus: 
+Protocol Hierarchy 
+Statistics → Protocol Hierarchy 
+Record: 
+• Total packets captured 
+• TCP packet count 
+• UDP packet count 
+• DNS packet count 
+• HTTP packet count 
+Conversations 
+Statistics → Conversations 
+Record: 
+• Top source IPs 
+• Top destination IPs 
+• Most active TCP conversations 
+Endpoints 
+Statistics → Endpoints 
+Record: 
+• Number of hosts discovered 
+• Most active host 
+Part O: Packet Reconstruction 
+Follow TCP Stream 
+Right-click a TCP packet: 
+Follow → TCP Stream 
+Tasks 
+1. Reconstruct a complete HTTP session. 
+2. Identify request and response headers. 
+3. Record the server banner. 
+4. Identify webpage contents returned by the server. 
+Part P: Mini Network Forensics Challenge 
+Answer the following questions using Wireshark: 
+1. What is the IP address of the Metasploitable machine? 
+2. What operating system was detected by Nmap? 
+3. Which ports were open? 
+4. Which DNS server was used? 
+5. Which websites were visited? 
+6. Which host generated the most traffic? 
+7. Was any plaintext login information observed? 
+8. Which Nmap scan generated the highest packet count? 
+9. How many TCP conversations were established? 
+10. Which protocol generated the most traffic? 
+Deliverables 
+Submit a lab report containing: 
+1. Metasploitable IP address used. 
+2. Screenshots of: 
+o Wireshark capture window 
+o Nmap scan results 
+o Applied display filters 
+3. Analysis of at least five display filters. 
+4. Identification of: 
+o TCP SYN packets 
+o DNS queries and responses 
+o HTTP requests 
+o Nmap scanning behavior 
+5. Conclusions summarizing key observations and lessons learned. 
+6. Screenshots of at least 15 display filters. 
+7. TCP three-way handshake analysis. 
+8. DNS resolution analysis. 
+9. ARP request/reply analysis. 
+10. HTTP session reconstruction. 
+11. Nmap scan comparison table. 
