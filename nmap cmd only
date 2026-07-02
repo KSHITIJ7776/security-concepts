@@ -1,0 +1,27 @@
+`nmap <target>` - Basic scan of target, `nmap <IP>` - Scan single IP address, `nmap hostname.com` - Scan domain, `nmap 192.168.1.1-100` - Scan IP range, `nmap 192.168.1.0/24` - Scan subnet, `nmap target1 target2` - Scan multiple targets, `nmap -iL targets.txt` - Scan targets from file, `nmap -iR 10` - Scan random hosts, `nmap --exclude <host>` - Exclude host from scan, `nmap --excludefile file.txt` - Exclude hosts from file.
+
+`-sn` - Host discovery only, `-Pn` - Skip host discovery and assume host is online, `-PE` - ICMP Echo Ping, `-PP` - ICMP Timestamp Ping, `-PM` - ICMP Netmask Ping, `-PO` - IP Protocol Ping, `-PS` - TCP SYN Ping, `-PA` - TCP ACK Ping, `-PU` - UDP Ping, `-PY` - SCTP Ping, `-PR` - ARP Ping, `-n` - Disable DNS resolution, `-R` - Force DNS resolution, `--system-dns` - Use system DNS resolver, `--dns-servers` - Specify DNS servers.
+
+`-sS` - TCP SYN (Stealth) Scan, `-sT` - TCP Connect Scan, `-sU` - UDP Scan, `-sA` - ACK Scan, `-sW` - Window Scan, `-sM` - Maimon Scan, `-sN` - NULL Scan, `-sF` - FIN Scan, `-sX` - Xmas Scan, `-sY` - SCTP INIT Scan, `-sZ` - SCTP COOKIE-ECHO Scan, `-sO` - IP Protocol Scan, `-b` - Idle/Zombie Scan.
+
+`-p 80` - Scan specific port, `-p 22,80,443` - Scan multiple ports, `-p 1-1000` - Scan port range, `-p-` - Scan all 65535 ports, `--top-ports 100` - Scan top 100 ports, `-F` - Fast scan of common ports, `-r` - Scan ports sequentially.
+
+`-sV` - Detect service versions, `--version-intensity 0-9` - Set version detection intensity, `--version-light` - Light version detection, `--version-all` - Aggressive version detection, `--version-trace` - Show version scan details.
+
+`-O` - Detect operating system, `--osscan-limit` - Limit OS detection to promising hosts, `--osscan-guess` - Guess OS if uncertain.
+
+`-sC` - Run default NSE scripts, `--script default` - Execute default scripts, `--script vuln` - Run vulnerability scripts, `--script auth` - Authentication scripts, `--script safe` - Safe scripts, `--script intrusive` - Intrusive scripts, `--script malware` - Malware detection scripts, `--script exploit` - Exploit-related scripts, `--script dos` - DoS scripts, `--script discovery` - Discovery scripts, `--script brute` - Brute-force scripts, `--script broadcast` - Broadcast scripts, `--script ftp*` - FTP scripts, `--script smb*` - SMB scripts, `--script http*` - HTTP scripts, `--script ssh*` - SSH scripts, `--script ssl*` - SSL/TLS scripts, `--script dns*` - DNS scripts, `--script snmp*` - SNMP scripts, `--script-updatedb` - Update NSE database, `--script-help <script>` - Show script help, `--script-args` - Pass arguments to scripts.
+
+`-T0` - Paranoid timing, `-T1` - Sneaky timing, `-T2` - Polite timing, `-T3` - Normal timing, `-T4` - Aggressive timing, `-T5` - Insane timing, `--min-rate` - Minimum packets per second, `--max-rate` - Maximum packets per second, `--min-parallelism` - Minimum parallel probes, `--max-parallelism` - Maximum parallel probes, `--scan-delay` - Delay between probes, `--host-timeout` - Maximum scan time per host, `--max-retries` - Maximum retransmissions.
+
+`-f` - Fragment packets, `--mtu` - Set MTU size, `-D` - Use decoy IPs, `-S` - Spoof source IP, `--source-port` - Spoof source port, `-g` - Set source port, `--data-length` - Append random data, `--ip-options` - Set IP options, `--ttl` - Set packet TTL, `--spoof-mac` - Spoof MAC address, `--badsum` - Send invalid checksums.
+
+`-oN file.txt` - Save normal output, `-oX file.xml` - Save XML output, `-oG file.gnmap` - Save grepable output, `-oS file.txt` - Script-kiddie output, `-oA filename` - Save all formats, `-v` - Verbose mode, `-vv` - Very verbose mode, `-d` - Debug mode, `-dd` - High debug mode, `--reason` - Show reason for port state, `--open` - Show only open ports, `--packet-trace` - Display packet details, `--iflist` - List interfaces, `--append-output` - Append to output file.
+
+`--resume` - Resume interrupted scan, `--stats-every` - Show periodic status updates, `--privileged` - Assume privileged mode, `--unprivileged` - Assume unprivileged mode, `--release-memory` - Reduce memory usage, `--defeat-rst-ratelimit` - Bypass RST rate limiting, `--defeat-icmp-ratelimit` - Bypass ICMP rate limiting.
+
+`-6` - Enable IPv6 scanning.
+
+Useful combinations: `nmap -A <target>` - Aggressive scan (OS, version, scripts, traceroute), `nmap -A -T4 <target>` - Fast aggressive scan, `nmap -Pn -A <target>` - Aggressive scan without ping, `nmap -sV -O <target>` - Service version and OS detection, `nmap -sS -sV <target>` - SYN scan with version detection, `nmap -sU -sV <target>` - UDP scan with version detection, `nmap -sC -sV <target>` - Default scripts and version detection, `nmap -O -A <target>` - OS detection with aggressive scan, `nmap --traceroute <target>` - Perform traceroute, `nmap -F <target>` - Fast scan, `nmap -p- -T4 <target>` - Scan all ports quickly, `nmap -sS -Pn -T4 <target>` - SYN scan without host discovery, `nmap -sn 192.168.1.0/24` - Discover live hosts, `nmap -sV --script vuln <target>` - Version detection and vulnerability scripts.
+
+`nmap --help` - Show help, `nmap -h` - Short help, `nmap -V` - Display Nmap version, `nmap --version` - Show version information, `nmap --iflist` - Display network interfaces.
